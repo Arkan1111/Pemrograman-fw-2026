@@ -2,8 +2,20 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::post('/', function () {
+Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/about', function () {
+    return 'Selamat datang di toko Barokah Mart.';
+});
+
+Route::get('/products', function () {
+    return 'Daftar produk Barokah Mart.';
+});
+
+Route::post('/products', function () {
+    return 'Data produk berhasil disimpan.';
 });
 
 use App\Http\Controllers\DashboardController;
