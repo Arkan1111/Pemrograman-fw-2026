@@ -2,6 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Controller
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PosController;
+
+
+// ====================
+// Halaman Utama
+// ====================
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -10,16 +23,62 @@ Route::get('/about', function () {
     return 'Selamat datang di toko Barokah Mart.';
 });
 
-Route::get('/products', function () {
-    return 'Daftar produk Barokah Mart.';
-});
 
-Route::post('/products', function () {
-    return 'Data produk berhasil disimpan.';
-});
+// ====================
+// Dashboard
+// ====================
 
-use App\Http\Controllers\DashboardController;
- 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth'])
     ->name('dashboard');
+
+
+// ====================
+// Authentication
+// ====================
+
+Route::get('/login', [LoginController::class, 'create'])
+    ->middleware('guest')
+    ->name('login');
+
+Route::post('/login', [LoginController::class, 'store'])
+    ->middleware('guest')
+    ->name('login.store');
+
+Route::post('/logout', [LoginController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
+
+
+// ====================
+// Admin
+// ====================
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+
+    // php artisan make:controller CategoryController --resource
+    Route::resource('categories', CategoryController::class);
+
+    // php artisan make:controller ProductController --resource
+    Route::resource('products', ProductController::class);
+
+    // php artisan make:controller ReportController
+    Route::get('/reports/sales', [ReportController::class, 'sales'])
+        ->name('report.sales');
+});
+
+
+// ====================
+// Admin & Kasir
+// ====================
+
+Route::middleware(['auth', 'role:admin,kasir'])->group(function () {
+
+    // php artisan make:controller PosController
+    Route::get('/pos', [PosController::class, 'index'])
+        ->name('pos.index');
+
+    // php artisan make:controller PosController
+    Route::post('/pos', [PosController::class, 'store'])
+        ->name('pos.store');
+});
