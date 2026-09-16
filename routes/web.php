@@ -9,11 +9,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PosController;
-
-
-// ====================
-// Halaman Utama
-// ====================
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -23,19 +19,9 @@ Route::get('/about', function () {
     return 'Selamat datang di toko Barokah Mart.';
 });
 
-
-// ====================
-// Dashboard
-// ====================
-
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth'])
     ->name('dashboard');
-
-
-// ====================
-// Authentication
-// ====================
 
 Route::get('/login', [LoginController::class, 'create'])
     ->middleware('guest')
@@ -48,11 +34,6 @@ Route::post('/login', [LoginController::class, 'store'])
 Route::post('/logout', [LoginController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
-
-
-// ====================
-// Admin
-// ====================
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
 
@@ -67,11 +48,6 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         ->name('report.sales');
 });
 
-
-// ====================
-// Admin & Kasir
-// ====================
-
 Route::middleware(['auth', 'role:admin,kasir'])->group(function () {
 
     // php artisan make:controller PosController
@@ -81,4 +57,15 @@ Route::middleware(['auth', 'role:admin,kasir'])->group(function () {
     // php artisan make:controller PosController
     Route::post('/pos', [PosController::class, 'store'])
         ->name('pos.store');
+});
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::resource('categories', CategoryController::class);
+
+    Route::resource('products', ProductController::class);
+    
+    Route::get('/reports/sales', [ReportController::class, 'sales'])
+        ->name('report.sales');
+
+    Route::resource('users', UserController::class);
 });
