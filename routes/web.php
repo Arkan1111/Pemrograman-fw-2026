@@ -69,3 +69,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
     Route::resource('users', UserController::class);
 });
+
+Route::get('/pos/history', function () {
+    return 'Riwayat Transaksi Saya';
+})->name('pos.history');
