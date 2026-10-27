@@ -73,3 +73,5 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 Route::get('/pos/history', function () {
     return 'Riwayat Transaksi Saya';
 })->name('pos.history');
+
+Route::resource('categories', CategoryController::class);
